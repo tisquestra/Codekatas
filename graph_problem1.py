@@ -1,43 +1,34 @@
 def positionInGraph(pos):
 	return ((pos[0] >= 0) and (pos[1] >= 0)) and ((pos[0] < rows) and (pos[1] < cols))
 
-def positionNotVisited(pos, visited):
+def positionNotVisited(pos):
 	return not(pos in visited)
 	
-def positionIsEmpty(pos, graph):
+def positionIsEmpty(pos):
 	return (graph[pos[0]][pos[1]]==0)
 	
-def getAdjacent(posx, posy, graph, visited):
+def getAdjacent(posx, posy):
 	adjQueue = [(posx-1,posy), (posx, posy+1), (posx+1, posy), (posx, posy-1)]
 	for i in adjQueue:
-		print "Adjacent pos (%d,%d)" %(i[0],i[1])
-		if (positionInGraph(i) and positionNotVisited(i, visited) and positionIsEmpty(i, graph)):
-			print "Yielding (%d,%d)" %(i[0],i[1])
+		if (positionInGraph(i) and positionNotVisited(i) and positionIsEmpty(i)):
 			yield i 
 
-def getOnePath(pos, inputPathLength, graph, visited):
-	print "Evaluating getOnePath"
-	print "position: %d,%d" % (pos[0],pos[1])
-	print visited
+def getOnePath(pos):
 	counter = 0
 	pathList = []
 	processQueue = []
-	if (not(positionIsEmpty(pos,graph)) or (pos in visited)):
-		print "Position is not empty or visited"
+	if (not(positionIsEmpty(pos)) or (pos in visited)):
 		return (pathList, counter)
 	else:
 		processQueue.append(pos)
-	while (processQueue and (counter < inputPathLength)):
-		print "Processing the current entry in the queue"
+	while (processQueue and (counter < length)):
 		currentPos = processQueue.pop()
-		print "Processing the entry %d,%d" %(currentPos[0],currentPos[1])
 		visited.add(currentPos)
 		pathList.append(currentPos)
 		counter = counter + 1
-		adjQueue = getAdjacent(currentPos[0],currentPos[1], graph, visited)
-		if (not(adjQueue) and counter < inputPathLength):
+		adjQueue = getAdjacent(currentPos[0],currentPos[1])
+		if (not(adjQueue) and counter < length):
 			pathList.pop(currentPos)
-			print "Decrementing counter %d" %(counter)
 			counter -= 1
 		for i in adjQueue:
 			processQueue.append(i)
@@ -57,11 +48,10 @@ def findFinalPath():
 	
 	for i in xrange(0,rows):
 		for j in xrange(0,cols):
-			path = getOnePath((i,j), length, graph, visited)
+			path = getOnePath((i,j))
 			if path[1] == length:
 				return path[0]
 	
-	print "impossible"
 	return "impossible"
 
 visited = set()
